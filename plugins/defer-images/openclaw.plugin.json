@@ -1,0 +1,9 @@
+{
+  "id": "defer-images",
+  "name": "Defer Images",
+  "description": "Defer image-only messages until text prompt arrives",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false
+  }
+}
