@@ -1,26 +1,29 @@
 # openclaw-math-tools
 
-OpenClaw plugins and skills for mathematicians and theoretical researchers.
+A workflow for mathematicians and theoretical researchers using [OpenClaw](https://openclaw.ai) + Feishu + Obsidian.
 
-## What's included
+**The workflow:** Snap photos of your handwritten derivations, diagrams, or whiteboard work — send them to your Feishu chat. The agent holds them silently. When you follow up with a question or "save to obsidian", it sees all the images at once and either answers with full context or transcribes the notes into your Obsidian vault with proper LaTeX formatting.
 
-### `plugins/defer-images` — Defer Images
+No more the agent firing on every image you drop. No more copy-pasting math by hand.
 
-Holds image-only messages (photos, diagrams, whiteboard shots) silently until the user sends a text prompt. All deferred images are then delivered together in a single agent turn.
+---
 
-**Why it matters:** Researchers often snap multiple photos of a derivation or diagram before typing their question. Without this plugin, the agent responds to each image individually — noisy and unhelpful. With it, you get one coherent response that sees everything at once.
+## Components
+
+### `plugins/defer-images`
+
+Holds image-only messages silently until you send a text prompt. All deferred images are delivered together in a single agent turn.
 
 **How it works:**
-- `before_dispatch` hook: detects image-only messages (JSON envelope with `image_key` or `file_key`), records a defer timestamp, suppresses the agent response
-- `before_agent_start` hook: scans `~/.openclaw/media/inbound/` for files downloaded around the defer time, injects their paths into the agent prompt via `prependContext`
+- `before_dispatch` hook: detects image-only messages, records a defer timestamp, suppresses the agent response
+- `before_agent_start` hook: scans `~/.openclaw/media/inbound/` for files downloaded around the defer time, injects their paths into the agent prompt
 
 **Install:**
 ```bash
-# From your openclaw workspace
 openclaw plugin install ./plugins/defer-images
 ```
 
-Then enable in `openclaw.json`:
+Enable in `openclaw.json`:
 ```json
 "plugins": {
   "entries": {
@@ -29,24 +32,13 @@ Then enable in `openclaw.json`:
 }
 ```
 
-Also set your image model with vision capability:
-```json
-"agents": {
-  "defaults": {
-    "imageModel": "your-provider/your-vision-model"
-  }
-}
-```
-
-And declare `"input": ["text", "image"]` on that model in `models.providers.<provider>.models`.
+Set a vision-capable model as `imageModel` and declare `"input": ["text", "image"]` on it in `models.providers.<provider>.models`.
 
 ---
 
-### `skills/handwrite-to-obsidian` — Handwrite to Obsidian
+### `skills/handwrite-to-obsidian`
 
-Transcribes a photo of handwritten notes into a Markdown note saved directly to your Obsidian vault — with full LaTeX math formatting and inline symbol annotations.
-
-**Why it matters:** Theoretical work lives on paper first. This skill bridges the gap between a whiteboard or notebook and a searchable, linkable Obsidian note, without losing any notation or symbols.
+Transcribes a photo of handwritten notes into a Markdown note saved to your Obsidian vault — with LaTeX math and inline symbol annotations.
 
 **Transcription rules:**
 - Faithful reproduction — no paraphrasing or reordering
@@ -66,15 +58,8 @@ openclaw gateway restart
 
 ---
 
-## Workflow
+## Dependencies
 
-1. Snap photos of your handwritten derivations or diagrams → send to the agent (no text yet)
-2. The `defer-images` plugin silently holds them
-3. Send your question or "save to obsidian"
-4. The agent sees all images at once and either answers your question with full context, or transcribes and saves the note to Obsidian with LaTeX formatting
-
-## Requirements
-
-- [OpenClaw](https://openclaw.ai) gateway
-- A vision-capable model configured as `imageModel`
-- `obsidian-cli` (for the handwrite skill) — `brew install obsidian-cli` or equivalent
+- [OpenClaw](https://openclaw.ai) — gateway and plugin/skill runtime
+- [Feishu](https://www.feishu.cn) — messaging channel
+- [obsidian-cli](https://github.com/Yakitrak/obsidian-cli) — vault path resolution for the handwrite skill
