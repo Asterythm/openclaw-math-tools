@@ -16,6 +16,7 @@ Transcribe a handwritten note image and save it as a Markdown note in Obsidian. 
 2. **Preserve notation** — every symbol, abbreviation, arrow, asterisk, etc. unchanged.
 3. **Math → LaTeX** — inline: `$...$`, display: `$$...$$`
 4. **Annotate on first use** — add `<!-- meaning -->` after the first occurrence of domain symbols when meaning is unambiguous. Never alter the text itself.
+   **Consistency** — track how each symbol is used throughout the note and apply it uniformly. If `f` appears as a function in one place, treat it as a function everywhere; do not reinterpret the same symbol differently across the note.
 5. **Structure** — preserve headings, lists, indentation using Markdown equivalents.
 6. **Illegible** → `[illegible]`. Never guess.
 7. **Language** — keep original. Do not translate.
